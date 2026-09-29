@@ -12,10 +12,10 @@
 
 | Mục | Nội dung |
 |-----|----------|
-| Public URL | Chưa có service healthy để kiểm tra |
+| Public URL | https://day12-agent-t5yx.onrender.com |
 | Platform | Render Blueprint (`render.yaml`) |
-| Ngày deploy | Đã thử tạo Blueprint; deploy đầu thất bại do GitHub `main` vẫn chứa mã TODO cũ |
-| Redis | Blueprint khai báo `day12-redis`; trạng thái cần xác nhận sau khi đồng bộ mã mới |
+| Ngày deploy | 2026-09-29 |
+| Redis | `day12-redis` — readiness endpoint xác nhận kết nối thành công |
 
 ## Biến Môi Trường Cần Cấu Hình Trên Cloud
 
@@ -32,14 +32,14 @@ Blueprint yêu cầu `AGENT_API_KEY` khi tạo service; không ghi giá trị se
 
 ## Verification
 
-Chưa có URL HTTPS healthy nên chưa thể gọi `/health`, `/ready` hoặc `/ask` từ Internet. Chưa có output verification hoặc screenshot dashboard/health thật. Các lệnh kiểm tra cần chạy sau khi deploy thành công:
+Đã kiểm tra URL công khai từ môi trường bên ngoài vào ngày 2026-09-29:
 
 ```bash
-curl -i https://<service-host>/health
-curl -i https://<service-host>/ready
-curl -i -X POST https://<service-host>/ask -H 'Content-Type: application/json' -d '{"question":"Hello"}'
+GET  /health → 200 {"status":"ok","service":"day12-agent","version":"1.0.0"}
+GET  /ready  → 200 {"status":"ready","redis":true}
+POST /ask without API key → 401 {"detail":"invalid or missing API key"}
 ```
 
 ## Evidence
 
-`dashboard.png` và `health.png` chưa được tạo: không có service cloud để chụp ảnh xác thực.
+`dashboard.png` và `health.png` chưa được tạo; các kết quả kiểm tra HTTP ở trên đã được xác nhận trực tiếp.
