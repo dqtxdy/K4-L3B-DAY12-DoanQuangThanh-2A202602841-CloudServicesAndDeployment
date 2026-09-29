@@ -128,18 +128,14 @@ alt-svc: h3=":443"; ma=86400
 
 {"answer":"Câu hỏi hay. Deploy là gì thường được giải quyết bằng cách chuẩn hóa môi trường chạy: cùng một image chạy giống nhau ở laptop và trên cloud.","user_id":"sv-test-evidence","history_length":0,"cost_usd":2.145e-05,"tokens":{"in":3,"out":35}}
 
-$ python - <<'PY'
-import os
-import httpx
-base = 'https://day12-agent-t5yx.onrender.com/ask'
-headers = {'X-API-Key': os.environ['DEPLOY_API_KEY'], 'X-User-Id': 'q9-rate-evidence'}
-codes = []
-with httpx.Client(timeout=30) as client:
-    for _ in range(15):
-        codes.append(client.post(base, headers=headers, json={'question': 'rate limit check'}).status_code)
-print(codes)
-PY
-[200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 429, 429, 429, 429, 429]
+$ for i in $(seq 1 15); do
+  curl -s -o /dev/null -w "%{http_code} " -X POST https://day12-agent-t5yx.onrender.com/ask \
+    -H "Content-Type: application/json" \
+    -H "X-API-Key: $AGENT_API_KEY" \
+    -H "X-User-Id: sv-test" \
+    -d '{"question":"test"}'
+done; echo
+200 200 200 200 200 200 200 200 200 200 429 429 429 429 429
 ```
 
 ## Ảnh Chụp Màn Hình
@@ -148,20 +144,3 @@ PY
 
 - `screenshots/dashboard.png` — trang quản lý service trên platform
 - `screenshots/health.png` — kết quả gọi `/health` từ trình duyệt hoặc curl
-
----
-
-## Nếu Dùng Phương Án Dự Phòng
-
-Không đăng ký được tài khoản cloud? Vẫn nộp được bài, nhưng CP5 tối đa 60% điểm:
-
-1. Đặt `LOCAL_FALLBACK=true` trong `.env`
-2. Chạy `docker compose up -d` rồi kiểm tra `docker compose ps`
-3. Chụp màn hình vào `screenshots/`
-4. Chạy `pytest tests/test_cp5.py -v` — bộ test sẽ tự chuyển sang kiểm tra
-   `http://localhost:8000`
-5. Ghi rõ lý do không deploy được vào phần dưới đây:
-
-```
-Không dùng phương án dự phòng; đã deploy thành công trên Render.
-```
