@@ -87,7 +87,7 @@ con số đó.
 Hai cơ chế này khác nhau ở điểm nào? Cho một tình huống mà rate limit cho qua
 nhưng cost guard phải chặn, và một tình huống ngược lại.
 
-> Rate limit giới hạn số request trong 60 giây; cost guard giới hạn tổng chi phí theo user trong tháng. Request rẻ vẫn có thể làm tổng tháng vượt ngân sách dù còn quota tốc độ. Ngược lại, request có chi phí dự kiến lớn có thể bị cost guard chặn dù user còn quota request.
+> Rate limit giới hạn số request trong 60 giây, còn cost guard giới hạn tổng chi phí theo user trong tháng. Nếu user còn quota request nhưng ngân sách tháng gần hết, rate limit có thể cho qua còn cost guard chặn. Ngược lại, nếu user đã gửi đủ 10 request rất rẻ trong 60 giây nhưng tổng chi phí tháng vẫn thấp, rate limit sẽ chặn request tiếp theo còn cost guard vẫn cho phép.
 
 ---
 
@@ -106,7 +106,7 @@ Chạy `docker compose up --scale agent=3` rồi gọi `/ask` nhiều lần vớ
 `X-User-Id`. Quan sát `history_length` trong response. Nếu lịch sử được lưu
 trong một dict Python thay vì Redis, bạn sẽ thấy con số đó thay đổi thế nào?
 
-> Chạy đúng `docker-compose up -d --scale agent=3` thì Compose cảnh báo và replica bị lỗi `Bind for 0.0.0.0:8000 failed: port is already allocated` vì mỗi replica publish cùng host port. Trong phép thử hai agent riêng cùng nối Redis, instance 1 trả `history_length=0`, request kế tiếp ở instance 2 trả `2`; hai process cùng đọc history từ Redis.
+> Chạy đúng `docker compose up --scale agent=3` thì Compose cảnh báo và replica bị lỗi `Bind for 0.0.0.0:8000 failed: port is already allocated` vì mỗi replica publish cùng host port. Trong phép thử hai agent riêng cùng nối Redis, instance 1 trả `history_length=0`, request kế tiếp ở instance 2 trả `2`; hai process cùng đọc history từ Redis. Nếu dùng `dict` riêng trong từng process, request được route sang replica khác sẽ không thấy history của replica trước, nên `history_length` sẽ thấp hơn hoặc nhảy không nhất quán giữa các request.
 
 ---
 
@@ -116,4 +116,4 @@ Ghi lại **một** lỗi bạn gặp khi deploy lên cloud (build fail, health 
 timeout, sai REDIS_URL, app không đọc `$PORT`...): thông báo lỗi là gì, bạn
 tìm ra nguyên nhân bằng cách nào, và sửa ra sao?
 
-> Deploy Render đầu tiên của commit `a790628` thất bại với `NotImplementedError: TODO (CP4): cài đặt install` tại `Lifecycle.install()` trong `app/lifecycle.py`. Hàm cài signal handler còn TODO nên startup dừng. Sau khi implement `Lifecycle.install()` và push code lên `main`, deploy sau chạy Live.
+> Deploy Render đầu tiên của commit `a790628` thất bại với `NotImplementedError: TODO (CP4): cài đặt install` tại `Lifecycle.install()` trong `app/lifecycle.py`. Mình đọc startup log/traceback trên Render và lần theo tới `Lifecycle.install()`, thấy phần cài signal handler còn TODO. Sau khi implement hàm này và push lên `main`, deploy sau chạy Live.
