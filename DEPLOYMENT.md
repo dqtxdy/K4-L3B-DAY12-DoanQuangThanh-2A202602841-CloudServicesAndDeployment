@@ -44,4 +44,4 @@ POST /ask, 10 requests in one minute → first 10 return 200; request 11 returns
 
 ## Evidence
 
-`health.png` chưa được chụp. `dashboard.png` chưa được chụp; cần ảnh dashboard Render thật để xác nhận service trên tài khoản.
+Ảnh dashboard Render và endpoint health đã được lưu tại `screenshots/dashboard.png` và `screenshots/health.png`.
