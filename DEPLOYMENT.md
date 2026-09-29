@@ -17,7 +17,7 @@
 | Ngày deploy | 2026-09-29 |
 | Redis | `day12-redis` — readiness endpoint xác nhận kết nối thành công |
 
-## Biến Môi Trường Cần Cấu Hình Trên Cloud
+## Biến Môi Trường Đã Cấu Hình Trên Cloud
 
 Blueprint yêu cầu `AGENT_API_KEY` khi tạo service; không ghi giá trị secret trong repository. Các biến còn lại được khai báo trong `render.yaml`:
 
@@ -38,8 +38,10 @@ Blueprint yêu cầu `AGENT_API_KEY` khi tạo service; không ghi giá trị se
 GET  /health → 200 {"status":"ok","service":"day12-agent","version":"1.0.0"}
 GET  /ready  → 200 {"status":"ready","redis":true}
 POST /ask without API key → 401 {"detail":"invalid or missing API key"}
+POST /ask with API key → 200 (answer returned; key omitted from this document)
+POST /ask, 10 requests in one minute → first 10 return 200; request 11 returns 429
 ```
 
 ## Evidence
 
-`dashboard.png` và `health.png` chưa được tạo; các kết quả kiểm tra HTTP ở trên đã được xác nhận trực tiếp.
+`health.png` chưa được chụp. `dashboard.png` chưa được chụp; cần ảnh dashboard Render thật để xác nhận service trên tài khoản.

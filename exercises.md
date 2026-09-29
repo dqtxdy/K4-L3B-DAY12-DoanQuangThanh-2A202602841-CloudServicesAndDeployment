@@ -106,4 +106,4 @@ Ghi lại **một** lỗi bạn gặp khi deploy lên cloud (build fail, health 
 timeout, sai REDIS_URL, app không đọc `$PORT`...): thông báo lỗi là gì, bạn
 tìm ra nguyên nhân bằng cách nào, và sửa ra sao?
 
-> Mình chưa deploy lên cloud. Trước khi chạy local stack, `docker compose version` báo `docker: unknown command: docker compose` vì CLI chưa có Compose plugin. Mình dùng Compose standalone tạm trong virtualenv và bộ Docker SDK tương thích; sau đó `up -d --build` chạy được, hai service báo healthy. Đây là lỗi ở bước cấu hình local, không phải lỗi cloud; deploy cloud và log lỗi của nó vẫn phải được xác minh riêng.
+> Lần deploy Render đầu báo thất bại. Mình đối chiếu mã trên nhánh `main` lúc đó với bản đã sửa trong workspace và thấy GitHub vẫn có `/health` ném `NotImplementedError`; các sửa đổi cần thiết chưa được đẩy lên repo nên Render build mã cũ. Sau khi mã đã sửa được đưa lên `main`, deploy thành công. Mình không giữ nguyên log chi tiết của lần thất bại đầu, nên không ghi nguyên văn thông báo ngoài trạng thái failed trên dashboard.
